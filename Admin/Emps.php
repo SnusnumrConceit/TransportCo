@@ -7,8 +7,8 @@
             $inputData = json_decode($_POST['emp']);                        
             require_once '../Classes/Employee.php';
             $emp = new Employee();
-            if($emp->CheckData($inputData)) {
-                $emp = $emp->SetData($inputData);
+            if($emp->Validate($inputData)) {
+                $emp = $emp->Set($inputData);
                 $emp->Create($emp);
             }            
         } 
@@ -38,10 +38,10 @@
     <body>
          <div class="container">
             <div>
-                <button id="btn-open-create-emp-container" class="btn btn-success">Добавить</button>
+                <button id="btn-open-container" class="btn btn-success">Добавить</button>
                 <a class="btn btn-default" href="admin.php">На главную</a>
             </div>
-            <div class="form-group create-emp-container">
+            <div class="form-group creator-container">
                 <form method="POST">
                     <div class="form-group">
                         <label for="last-name">Фамилия</label>
@@ -56,14 +56,14 @@
                         <input type="text" class="form-control" id="middle-name">
                     </div>
                     <div class="form-group">
-                        <label for="phone-number">Номер телефона</label>
-                        <input type="text" class="form-control" id="phone-number">
-                    </div>
-                    <div class="form-group">
                         <label for="birthday">Дата рождения</label>
                         <input type="text" class="form-control" id="birthday">
                     </div>
-                    <button type="button" id="btnSubmit" class="btn btn-success">Отправить</button>    
+                    <div class="form-group">
+                        <label for="phone-number">Номер телефона</label>
+                        <input type="text" class="form-control" id="phone-number">
+                    </div>
+                    <button type="button" id="btn-send" class="btn btn-success">Отправить</button>    
                 </form>
             </div>
             <div class="find-emp-container">                
@@ -95,10 +95,10 @@ USER;
                     for ($i=0; $i < $empsLength; $i++) { 
                         print "<tr>
                                 <td>{$findlessEmployees[$i]->id}</td>
-                                <td>{$findlessEmployees[$i]->Login}</td>
                                 <td>{$findlessEmployees[$i]->LName}</td>
                                 <td>{$findlessEmployees[$i]->FName}</td>
                                 <td>{$findlessEmployees[$i]->MName}</td>
+                                <td>{$findlessEmployees[$i]->Birthday}</td>
                                 <td>{$findlessEmployees[$i]->Phone}</td>
                                 <td><button class=\"btn btn-warning\">Изменить</button><button class=\"btn btn-danger\">Удалить</button></td>
                                 </tr>";
@@ -108,6 +108,7 @@ USER;
             </div>
         </div>  
         <script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js\"></script>
+        <script src=\"https://rawgit.com/RobinHerbots/jquery.inputmask/3.x/dist/jquery.inputmask.bundle.js\"></script>
         <script src=\"../Scripts/emps_scripts.js\"></script>      
     </body>
 </html>";
@@ -117,7 +118,7 @@ USER;
             </div>
         </div>  
         <script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js\"></script>
-        <script src=\"../Scripts/emps_scripts.js\"></script>      
+        <script src=\"../Scripts/Admin/emps_scripts.js\"></script>      
     </body>
 </html>";
             }
@@ -136,10 +137,10 @@ print <<<USERS
     <body>
          <div class="container">
             <div>
-                <button id="btn-open-create-emp-container" class="btn btn-success">Добавить</button>
+                <button id="btn-open-container" class="btn btn-success">Добавить</button>
                 <a class="btn btn-default" href="admin.php">На главную</a>
             </div>
-            <div class="form-group create-emp-container">
+            <div class="form-group creator-container">
                 <form method="POST">
                     <div class="form-group">
                         <label for="last-name">Фамилия</label>
@@ -154,14 +155,14 @@ print <<<USERS
                         <input type="text" class="form-control" id="middle-name">
                     </div>
                     <div class="form-group">
-                        <label for="phone-number">Номер телефона</label>
-                        <input type="text" class="form-control" id="phone-number">
-                    </div>
-                    <div class="form-group">
                         <label for="birthday">Дата рождения</label>
                         <input type="text" class="form-control" id="birthday">
                     </div>
-                    <button type="button" id="btnSubmit" class="btn btn-success">Отправить</button>    
+                    <div class="form-group">
+                        <label for="phone-number">Номер телефона</label>
+                        <input type="text" class="form-control" id="phone-number">
+                    </div>
+                    <button type="button" id="btn-send" class="btn btn-success">Отправить</button>    
                 </form>
             </div>
             <div class="find-emp-container">                
@@ -184,6 +185,7 @@ USERS;
                                         <th>Фамилия</th>
                                         <th>Имя</th>
                                         <th>Отчество</th>
+                                        <th>Дата рождения</th>
                                         <th>Номер телефона</th>
                                         <th>Операции</th>
                                     </thead>
@@ -195,6 +197,7 @@ USERS;
                                             <td>{$result[$i]->LName}</td>
                                             <td>{$result[$i]->FName}</td>
                                             <td>{$result[$i]->MName}</td>
+                                            <td>{$result[$i]->Birthday}</td>
                                             <td>{$result[$i]->Phone}</td>
                                             <td><button class=\"btn btn-warning\">Изменить</button><button class=\"btn btn-danger\">Удалить</button></td>
                                         </tr>";
@@ -208,7 +211,7 @@ print               "</tbody>
         </div>  
         <script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js\"></script>
         <script src=\"https://rawgit.com/RobinHerbots/jquery.inputmask/3.x/dist/jquery.inputmask.bundle.js\"></script>
-        <script src=\"../Scripts/emps_scripts.js\"></script>      
+        <script src=\"../Scripts/Admin/emps_scripts.js\"></script>      
     </body>
 </html>";
         }

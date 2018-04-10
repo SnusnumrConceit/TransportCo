@@ -67,7 +67,7 @@ class Employee implements IEmployee{
         }
     }
 
-    public function SetData($emp)
+    public function Set($emp)
     {
         $this->id = uniqid();
         $this->lastName = $emp->lastName;
@@ -78,7 +78,7 @@ class Employee implements IEmployee{
         return $this;
     }
 
-    public function CheckData($emp)
+    public function Validate($emp)
     {
         try {
             #проверка на обязательность поля
@@ -324,9 +324,9 @@ interface IEmployee {
   
     function Update($emp);
 
-    function SetData($emp);
+    function Set($emp);
 
-    function CheckData($emp);
+    function Validate($emp);
 
     function Show();
 }

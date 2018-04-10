@@ -77,7 +77,7 @@ class Tax implements ITax {
         $getTaxQuery->execute(array($id));
         $tax = $getTaxQuery->fetchAll(PDO::FETCH_OBJ);
         if ($tax) {
-            return true;
+            return $tax;
         } else {
             return false;
         }
