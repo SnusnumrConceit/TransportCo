@@ -20,7 +20,7 @@ print <<<POST
         <div class="container">
             <div class="functional-container row">
                 <button class="btn btn-success col-1" id="btn-open-container">Добавить</button>
-                <button class="btn btn-secondary offset-sm-1" id="btn-open-container">На главную</button>
+                <a class="btn btn-default offset-sm-1" href="admin.php">На главную</a>
                 <form method="GET" class="form-inline col" id="find-input">
                     <div class="form group offset-sm-4">
                         <input type="text" class="form-control" placeholder="Введите описание" value="{$desc}">
@@ -51,12 +51,12 @@ print <<<POST
 POST;
             if ($taxes) {
                 echo("<table class='table table-hover'>
-                        <thead class='thead-dark'>
+                        <thead class='thead-dark' class='thead class='thead-dark'-dark'>
                             <th class='d-none'></th>
                             <th>Описание</th>
                             <th>Размер</th>
                             <th>Операции</th>
-                        </thead>
+                        </thead class='thead-dark'>
                         <tbody>");
                 $taxesLength = count($taxes);
                 for ($i=0; $i < $taxesLength; $i++) {
@@ -100,7 +100,7 @@ print <<<POST
         <div class="container">
             <div class="functional-container row">
                 <button class="btn btn-success col-1" id="btn-open-container">Добавить</button>
-                <button class="btn btn-secondary offset-sm-1" id="btn-open-container">На главную</button>
+                <a class="btn btn-default offset-sm-1" href="admin.php">На главную</a>
                 <form method="GET" class="form-inline col">
                     <div class="form group offset-sm-4">
                         <input type="text" class="form-control" placeholder="Введите описание" id="find-input">
@@ -135,12 +135,12 @@ POST;
 
             if ($taxes) {
                 echo("<table class='table table-hover'>
-                        <thead class='thead-dark'>
+                        <thead class='thead-dark' class='thead class='thead-dark'-dark'>
                             <th class='d-none'></th>
                             <th>Описание</th>
                             <th>Размер</th>
                             <th>Операции</th>
-                        </thead>
+                        </thead class='thead-dark'>
                         <tbody>");
                 $taxesLength = count($taxes);
                 for ($i=0; $i < $taxesLength; $i++) {

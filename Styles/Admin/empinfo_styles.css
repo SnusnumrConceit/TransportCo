@@ -1,0 +1,13 @@
+section {
+    margin: 20px 0px;
+    border: 3px solid lightgrey;
+    border-radius: 10px;
+}
+
+.tax-creator-container {
+    display: none;
+}
+
+.routes-creator-container {
+    display: none;
+}

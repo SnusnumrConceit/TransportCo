@@ -6,17 +6,15 @@
         if ($_POST['emp'] ?? '') {
             $inputData = json_decode($_POST['emp']);                        
             require_once '../Classes/Employee.php';
-            $emp = new Employee();
-            if($emp->Validate($inputData)) {
-                $emp = $emp->Set($inputData);
+            if(Employee::Validate($inputData)) {
+                $emp = new Employee($inputData);
                 $emp->Create($emp);
             }            
         } 
         elseif ($_POST['id'] ?? '') {
             $id = $_POST['id'];            
             require_once '../Classes/Employee.php';
-            $emp = new Employee();
-            $emp->Delete($id);
+            Employee::Delete($id);
         }        
         else {
             echo('Ничего не пришло');
@@ -37,9 +35,15 @@
     </head>
     <body>
          <div class="container">
-            <div>
+         <div class='row'>
                 <button id="btn-open-container" class="btn btn-success">Добавить</button>
                 <a class="btn btn-default" href="admin.php">На главную</a>
+                <form method="GET" class='form-inline col'>
+                    <div class="form-group find-emp-container offset-sm-4">                
+                        <input class="form-control" type="text" id="find-input" placeholder="Введите фамилию" value="{$inputData}">
+                        <button id="btn-find" class="btn btn-primary" type="button">Найти</button>
+                    </div>
+                </form>
             </div>
             <div class="form-group creator-container">
                 <form method="POST">
@@ -66,40 +70,33 @@
                     <button type="button" id="btn-send" class="btn btn-success">Отправить</button>    
                 </form>
             </div>
-            <div class="find-emp-container">                
-                <form method="GET">
-                    <input class="form-control" type="text" id="emp" value="{$inputData}" placeholder="Введите фамилию работника">
-                    <button id="btn-find-emp" class="btn btn-primary">Найти</button>
-                </form>
-            </div>
             <div>
                     <h2>Работники</h2>
 USER;
                     require_once '../Classes/Employee.php';
-                    $emp = new Employee();
-                    $findlessEmployees = $emp->Find($inputData);            
-                    if ($findlessEmployees) {
-                        $empsLength = count($findlessEmployees);
+                    $emp = Employee::Find($inputData);
+                    if ($emp) {
+                        $empsLength = count($emp);
                         print "<table class=\"table table-bordered\">
-                                        <thead>
-                                            <th>id</th>
+                                        <thead class='thead-dark'>
+                                            <th class='d-none'></th>
                                             <th>Фамилия</th>
                                             <th>Имя</th>
                                             <th>Отчество</th>
                                             <th>Номер телефона</th>
                                             <th>Дата рождения</th>
                                             <th>Операции</th>
-                                        </thead>
+                                        </thead class='thead-dark'>
                                         <tbody>";
 
                     for ($i=0; $i < $empsLength; $i++) { 
                         print "<tr>
-                                <td>{$findlessEmployees[$i]->id}</td>
-                                <td>{$findlessEmployees[$i]->LName}</td>
-                                <td>{$findlessEmployees[$i]->FName}</td>
-                                <td>{$findlessEmployees[$i]->MName}</td>
-                                <td>{$findlessEmployees[$i]->Birthday}</td>
-                                <td>{$findlessEmployees[$i]->Phone}</td>
+                                <td class='d-none'>{$emp[$i]->id}</td>
+                                <td>{$emp[$i]->LName}</td>
+                                <td>{$emp[$i]->FName}</td>
+                                <td>{$emp[$i]->MName}</td>
+                                <td>{$emp[$i]->Birthday}</td>
+                                <td>{$emp[$i]->Phone}</td>
                                 <td><button class=\"btn btn-warning\">Изменить</button><button class=\"btn btn-danger\">Удалить</button></td>
                                 </tr>";
                     }
@@ -109,7 +106,7 @@ USER;
         </div>  
         <script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js\"></script>
         <script src=\"https://rawgit.com/RobinHerbots/jquery.inputmask/3.x/dist/jquery.inputmask.bundle.js\"></script>
-        <script src=\"../Scripts/emps_scripts.js\"></script>      
+        <script src=\"../Scripts/Admin/emps_scripts.js\"></script>    
     </body>
 </html>";
             } else {
@@ -136,9 +133,15 @@ print <<<USERS
     </head>
     <body>
          <div class="container">
-            <div>
+            <div class='row'>
                 <button id="btn-open-container" class="btn btn-success">Добавить</button>
                 <a class="btn btn-default" href="admin.php">На главную</a>
+                <form method="GET" class='form-inline col'>
+                    <div class="form-group find-emp-container offset-sm-4">                
+                        <input class="form-control" type="text" id="find-input" placeholder="Введите фамилию">
+                        <button id="btn-find" class="btn btn-primary" type="button">Найти</button>
+                    </div>
+                </form>
             </div>
             <div class="form-group creator-container">
                 <form method="POST">
@@ -165,35 +168,27 @@ print <<<USERS
                     <button type="button" id="btn-send" class="btn btn-success">Отправить</button>    
                 </form>
             </div>
-            <div class="find-emp-container">                
-                <form method="GET">
-                    <input class="form-control" type="text" id="emp" placeholder="Введите фамилию работника">
-                    <button id="btn-find-emp" class="btn btn-primary">Найти</button>
-                </form>
-            </div>
             <div>
                 <h2>Работники</h2>
 USERS;
                         require_once '../Classes/Employee.php';
-                        $emp = new Employee();
-                        $result = $emp->Show();
+                        //$emp = new Employee();
+                        $result = Employee::Show();
                         if($result){
                             print "<table class=\"table table-bordered\">
-                                    <thead>
-                                        <th>id</th>
-                                        <th>Логин</th>
+                                    <thead class='thead-dark'>
+                                        <th class='d-none'></th>
                                         <th>Фамилия</th>
                                         <th>Имя</th>
                                         <th>Отчество</th>
                                         <th>Дата рождения</th>
                                         <th>Номер телефона</th>
                                         <th>Операции</th>
-                                    </thead>
+                                    </thead class='thead-dark'>
                                     <tbody>";
                             for ($i=0; $i < count($result); $i++) { 
                                 print "<tr>
-                                            <td>{$result[$i]->id}</td>
-                                            <td>{$result[$i]->Login}</td>                                            
+                                            <td class='d-none'>{$result[$i]->id}</td>
                                             <td>{$result[$i]->LName}</td>
                                             <td>{$result[$i]->FName}</td>
                                             <td>{$result[$i]->MName}</td>

@@ -1,76 +1,30 @@
-$(document).ready(function () {  
-    var btnDelete = $('.btn-danger'),
-        btnEdit = $('.btn-warning'),
-        btnFind = $('#btn-find'),
-        btnOpen = $('#btn-open-container'),
-        btnCreator = $('#btn-send'),
-        findForm = $('#find-input'),
-        creatorContainer = $('.creator-container'),
-        lastNameForm = $('#last-name'),
+$(document).ready( function () {
+    var lastNameForm = $('#last-name'),
         firstNameForm = $('#first-name'),
         middleNameForm = $('#middle-name'),
+        phoneNumberForm = $('#phone-number'),
         birthdayForm = $('#birthday'),
-        phoneNumberForm = $('#phone-number');
-
-
-        creatorContainer.css('display', 'none');
-
-    btnOpen.click(function () {
-        creatorContainer.slideToggle();
+        btnSender = $('#btn-send'),
+        btnOpenTaxes = $('#open-tax-creator-container'),
+        btnOpenRoutes = $('#open-route-creator-container'),
+        btnTax = $('#btn-tax'),
+        btnRoute = $('#btn-route'),
+        btnDeleteTax = $('.btn-tax-delete'),
+        radioBtns = $('input[type="radio"]'),
+        btnDeleteRoute = $('#btn-remove-route');
+    
+    
+    btnOpenTaxes.click(function () {  
+        $('.tax-creator-container').slideToggle();
     })
 
-    $('#phone-number').inputmask('(999)-999-99-99');
-    $('#birthday').inputmask('99.99.9999');
-    btnDelete.click(function () {
-        for (var index = 0; index < btnDelete.length; index++) {
-            if (btnDelete[index] == event.target) {
-                var position = index +1,
-                    emp_id = $('tr:nth-child('+position+') .d-none').text();
-                $.post('emps.php', {id: emp_id}, function (response) {
-                    if (response.length != 0) {
-                        alert(response);
-                    } else {
-                        window.location.reload();
-                    }
-                })
-
-            }
-            
-        }
+    btnOpenRoutes.click(function () {  
+        $('.routes-creator-container').slideToggle();
     })
-
-    btnEdit.click(function () {
-      for (var index = 0; index < btnEdit.length; index++) {
-          if(btnEdit[index] == event.target) {
-            var position = index +1,
-                emp_id = $('tr:nth-child('+position+') .d-none').text();
-                window.location.href = 'Info/empinfo.php?emp='+ emp_id;
-          }
-          
-      }  
-    })
-
-    btnFind.click(function(){
-        var lastName = findForm.val();
-            try {
-                if (lastName !== undefined && lastName !== null && lastName.length !=0) {
-                    window.location.href = 'emps.php?emp='+lastName;
-                } else {
-                    throw new Error('Empty Find Error');
-                }
-            } catch (error) {
-                if (error.message == 'Empty Find Error') {
-                    findForm.addClass('is-invalid');
-                    findForm.prop('placeholder', 'Вы не ввели описание');
-                }
-                else {
-                    alert(error.message);
-                }
-            }
-    })
-
-    btnCreator.click(function () {  
-        var lastName = lastNameForm.val(),
+    
+    btnSender.click(function () {  
+        var id = window.location.search.split('=')[1],
+            lastName = lastNameForm.val(),
             firstName = firstNameForm.val(),
             middleName = middleNameForm.val(),
             birthday = birthdayForm.val(),
@@ -78,17 +32,18 @@ $(document).ready(function () {
 
         if (ValidateLName(lastName) && ValidateFName(firstName) && ValidateMName(middleName)
             && ValidateBday(birthday) && ValidatePhone(phone)) {
-            var emp = new Emp(lastName, firstName, middleName, birthday, phone);
+            var emp = new Emp(id, lastName, firstName, middleName, birthday, phone);
                 emp = JSON.stringify(emp);
-                $.post('emps.php', {emp: emp}, function (response) {  
+                $.post('empinfo.php', {emp: emp}, function (response) {  
                     if (response.length != 0) {
                         alert(response);
                     } else {
-                        window.location.reload();
+                        window.location.href = '../emps.php';
                     }
                 })
 
-            function Emp(lastName, firstName, middleName, birthday, phone) {
+            function Emp(id, lastName, firstName, middleName, birthday, phone) {
+                this.id = id,
                 this.lastName = lastName,
                 this.firstName = firstName,
                 this.middleName = middleName,
@@ -287,5 +242,100 @@ $(document).ready(function () {
             }
             
         }
+    })
+
+    btnTax.click(function () {  
+        var arrTaxes = [],
+            emp_id = window.location.search.split('=')[1];
+        $(':checked').each(function () {  
+            arrTaxes.push(this.value);
+        })
+        var taxes = new Taxes(arrTaxes, emp_id);
+        taxes = JSON.stringify(taxes);
+        $.post(
+            'empinfo.php',
+            {taxes: taxes},
+            function (response) {  
+                if (response.length != 0) {
+                    alert(response);
+                } else {
+                    window.location.reload();
+                }
+            }
+        )
+        function Taxes(arrTaxes, emp_id) {
+            this.taxes = arrTaxes,
+            this.emp_id = emp_id
+        }
+    })
+
+    btnDeleteTax.click(function () {  
+        for (var index = 0; index < btnDeleteTax.length; index++) {
+            if (btnDeleteTax[index] == event.target) {
+                var position = index + 1;
+                    tax_id = $('li:nth-child('+position+') .d-none').text();
+                $.post(
+                    'empinfo.php', 
+                    {tax: tax_id}, 
+                    function (response) {  
+                        if (response.length != 0) {
+                            alert(response);
+                        } else {
+                            window.location.reload();
+                        }
+                })
+            }
+            
+        }
+    })
+
+
+    radioBtns.click(function () {  
+        /*if (this.checked) {
+            this.checked = false;
+        } else {*/
+            $('input[type="radio"]').prop('disabled', true);
+            $('input[type="radio"]:checked').prop('disabled', false);    
+        //}
+    })
+
+
+    /*$('section').click(function () {  
+        $('input[type="radio"]').prop('disabled', false); 
+    })*/
+
+    btnRoute.click(function () {  
+        var transport = $('input[type="radio"]:checked').val(),
+            emp = window.location.search.split('=')[1],
+            route = new Route(emp, transport);
+            route = JSON.stringify(route);
+            $.post(
+                '../routes.php',
+                {route: route},
+                function (response) {  
+                    if (response.length != 0) {
+                        alert(response);
+                    } else {
+                        window.location.reload();
+                    }
+                }
+            )
+
+            function Route(emp, transport) { 
+                this.transport = transport,
+                this.emp = emp;
+             }
+
+    })
+
+    btnDeleteRoute.click(function () {  
+        var emp = window.location.search.split('=')[1];
+        $.post('../routes.php', {emp: emp}, function (response) {  
+            if (response.legnth > 2) {
+                alert(response);
+            } else {
+                window.location.reload();
+            }
+        })
     })
 })
