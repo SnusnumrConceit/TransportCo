@@ -1,4 +1,7 @@
 <?php
+session_start();
+if ($_SESSION ?? '') {
+    if ($_SESSION['name'] === 'admin') {
     if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         if ($_GET['bus'] ?? '') {
             $id = $_GET['bus'];
@@ -80,4 +83,10 @@
     } else {
         http_response_code(502);
     }
+} else {
+    header('location: ../index.php');
+}
+} else {
+header('location: ../index.php');
+}
 ?>

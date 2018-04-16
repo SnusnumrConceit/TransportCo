@@ -1,4 +1,5 @@
 <?php
+session_start();
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 print <<<ENTER
 <!DOCTYPE html>
@@ -152,6 +153,7 @@ ENTER;
             }
             if (ValidateLogin($user->login) && ValidatePass($user->pass)) {
                 if (in_array($user->login, $logins) && in_array($user->pass, $hashes)) {
+                    $_SESSION['name'] = 'admin';
                     header('location: Admin/admin.php');
                 } else {
                     echo('Неверные данные!');

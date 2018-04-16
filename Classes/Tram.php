@@ -67,6 +67,20 @@ class Tram implements ITram{
         }
     }
 
+    function GetWorking()
+    {
+        require_once 'DbConnect.php';
+        $db = DbConnect();
+        $selectBussQuery = $db->prepare('SELECT * FROM vtrams WHERE Statement <> "В ремонте"');
+        $selectBussQuery->execute();
+        $busess = $selectBussQuery->fetchAll(PDO::FETCH_OBJ);
+        if ($busess) {
+            return $busess;
+        } else {
+            return false;
+        }
+    }
+
     protected function CheckDublicates($tram, $db, $switch)
     {
         if ($switch === "create") {

@@ -1,4 +1,7 @@
 <?php
+session_start();
+if ($_SESSION ?? '') {
+    if ($_SESSION['name'] === 'admin') {
  if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         if ($_GET['number'] ?? '') {
             require_once '../Classes/Gazelle.php';
@@ -215,6 +218,12 @@ POST;
             $gazelle->Delete($id);
         }
     } else {
-        header('location: index.php');
+        header('location: admin.php');
     }
-    
+} else {
+    header('location: ../index.php');
+}
+} else {
+header('location: ../index.php');
+}
+?>

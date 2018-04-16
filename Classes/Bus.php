@@ -106,6 +106,20 @@ class Bus implements IBus{
         }
     }
 
+    function GetWorking()
+    {
+        require_once 'DbConnect.php';
+        $db = DbConnect();
+        $selectBussQuery = $db->prepare('SELECT * FROM vbuses WHERE Statement <> "В ремонте"');
+        $selectBussQuery->execute();
+        $busess = $selectBussQuery->fetchAll(PDO::FETCH_OBJ);
+        if ($busess) {
+            return $busess;
+        } else {
+            return false;
+        }
+    }
+
     public function Validate($tram, $photo)
     {
         if ($this->ValidateNumber($tram->number) && $this->ValidatePhoto($photo) && $this->ValidateRoute($tram->route)

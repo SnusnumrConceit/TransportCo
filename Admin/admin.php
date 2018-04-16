@@ -1,3 +1,14 @@
+<?php
+session_start();
+if ($_SESSION ?? '') {
+    if ($_SESSION['name'] === 'admin') {
+} else {
+    header('location: ../index.php');
+}
+} else {
+header('location: ../index.php');
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>

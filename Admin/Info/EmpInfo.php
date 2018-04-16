@@ -1,4 +1,7 @@
 <?php
+session_start();
+if ($_SESSION ?? '') {
+    if ($_SESSION['name'] === 'admin') {
     if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         if ($_GET['emp'] ?? '') {
             require_once '../../Classes/Employee.php';
@@ -74,14 +77,14 @@ USER;
                         <h4>Автобусы</h4>
                         <div class='row'>");
                         require_once '../../Classes/Bus.php';
-                        $buses = Bus::Show();
+                        $buses = Bus::GetWorking();
                         if ($buses) {
                             $busesLen = count($buses);
                             for ($i=0; $i < $busesLen; $i++) { 
                                 echo("<div class='col'><label for='buses'><input value='{$buses[$i]->id}' type='radio'>{$buses[$i]->Number}</label>");
                             }
                         } else {
-                            echo('Для назначения водителя на автобусный маршрут сначала создайте <i><a href="../Buses.php">Автобусы</a></i>');
+                            echo('<div class="col">Все автобусы сломаны. <i><a href="../Buses.php">Подробнее</a></i></div>');
                         }
 
                         echo("</div>
@@ -90,14 +93,14 @@ USER;
                         <h4>Маршрутные такси</h4>
                         <div class='row'>");
                         require_once '../../Classes/Gazelle.php';
-                        $gazelles = Gazelle::Show();
+                        $gazelles = Gazelle::GetWorking();
                         if ($gazelles) {
                             $gazellesLen = count($gazelles);
                             for ($i=0; $i < $gazellesLen; $i++) { 
                                 echo("<div class='col'><label for='gazelles'><input value='{$gazelles[$i]->id}' type='radio'>{$gazelles[$i]->Number}</label>");
                             }
                         } else {
-                            echo('Для назначения водителя на автобусный маршрут сначала создайте <i><a href="../gazelles.php">Автобусы</a></i>');
+                            echo('<div class="col">Все маршрутные такси сломаны. <i><a href="../gazelles.php">Подробнее</a></i></div>');
                         }
                         echo("</div>
                     </section>
@@ -105,14 +108,14 @@ USER;
                         <h4>Трамваи</h4>
                         <div class='row'>");
                         require_once '../../Classes/Tram.php';
-                        $trams = Tram::Show();
+                        $trams = Tram::GetWorking();
                         if ($trams) {
                             $tramsLen = count($trams);
                             for ($i=0; $i < $tramsLen; $i++) { 
                                 echo("<div class='col'><label for='trams'><input value='{$trams[$i]->id}' type='radio'>{$trams[$i]->Number}</label>");
                             }
                         } else {
-                            echo('Для назначения водителя на автобусный маршрут сначала создайте <i><a href="../trams.php">Автобусы</a></i>');
+                            echo('<div class="col">Все трамваи сломаны. <i><a href="../trams.php">Подробнее</a></i></div>');
                         }
                         echo("</div>
                     </section>
@@ -120,14 +123,14 @@ USER;
                         <h4>Троллейбусы</h4>
                         <div class='row'>");
                         require_once '../../Classes/Trolley.php';
-                        $trolleies = Trolley::Show();
+                        $trolleies = Trolley::GetWorking();
                         if ($trolleies) {
                             $trolleiesLen = count($trolleies);
                             for ($i=0; $i < $trolleiesLen; $i++) { 
                                 echo("<div class='col'><label for='trolleies'><input value='{$trolleies[$i]->id}' type='radio'>{$trolleies[$i]->Number}</label>");
                             }
                         } else {
-                            echo('Для назначения водителя на автобусный маршрут сначала создайте <i><a href="../trolleies.php">Автобусы</a></i>');
+                            echo('<div class="col">Все троллейбусы сломаны.  <i><a href="../trolleies.php">Подробнее</a></i></div>');
                         }
                         echo("</div>
                     </section>
@@ -200,5 +203,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         Employee::RemoveTax($tax);
     }
 }
-
-?>
+} else {
+    header('location: ../index.php');
+}
+} else {
+header('location: ../index.php');
+}

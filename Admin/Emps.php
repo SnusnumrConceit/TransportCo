@@ -1,7 +1,7 @@
 <?php
-/*session_start();
+session_start();
     if ($_SESSION ?? '') {
-        if ($_SESSION['name'] === 'admin') {*/
+        if ($_SESSION['name'] === 'admin') {
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {        
         if ($_POST['emp'] ?? '') {
             $inputData = json_decode($_POST['emp']);                        
@@ -211,10 +211,10 @@ print               "</tbody>
 </html>";
         }
     }
-/*} else {
-        header('location: ../enter.php');
+} else {
+        header('location: ../index.php');
     }
 } else {
-    header('location: ../enter.php');
-}*/
+    header('location: ../index.php');
+}
 ?>

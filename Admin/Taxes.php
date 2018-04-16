@@ -1,4 +1,7 @@
 <?php
+session_start();
+if ($_SESSION ?? '') {
+    if ($_SESSION['name'] === 'admin') {
  if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         if ($_GET['desc'] ?? '') {
             require_once '../Classes/Tax.php';
@@ -184,4 +187,10 @@ POST;
     } else {
         header('location: index.php');
     }
-    
+} else {
+    header('location: ../index.php');
+}
+} else {
+header('location: ../index.php');
+}
+?>
