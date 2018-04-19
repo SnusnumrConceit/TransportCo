@@ -4,6 +4,16 @@ class Tax implements ITax {
     protected $desc;
     protected $size;
 
+    public function __construct($tax) {
+        if ($tax->id ?? '') {
+            $this->id = $tax->id;
+        } else {
+            $this->id = uniqid();
+        }
+        $this->desc = $tax->desc;
+        $this->size = $tax->size;
+    }
+
     public function Create($tax)
     {
         require_once 'DbConnect.php';
@@ -47,7 +57,7 @@ class Tax implements ITax {
         $updateTaxQuery->execute(array($tax->desc, $tax->size, $tax->id));
     }
 
-    public function Delete($id)
+    static function Delete($id)
     {
         require_once 'DbConnect.php';
         $db = DbConnect();
@@ -55,7 +65,7 @@ class Tax implements ITax {
         $deleteTaxQuery->execute(array($id));
     }
 
-    public function Find($desc)
+    static function Find($desc)
     {
         require_once 'DbConnect.php';
         $db = DbConnect();
@@ -69,7 +79,7 @@ class Tax implements ITax {
         }
     }
 
-    public function Get($id)
+    static function Get($id)
     {
         require_once 'DbConnect.php';
         $db = DbConnect();
@@ -83,7 +93,7 @@ class Tax implements ITax {
         }
     }
 
-    public function Show()
+    static function Show()
     {
         require_once 'DbConnect.php';
         $db = DbConnect();
@@ -97,99 +107,79 @@ class Tax implements ITax {
         }
     }
 
-    public function Set($tax)
-    {
-        if ($tax->id ?? '') {
-            $this->id = $tax->id;
-        } else {
-            $this->id = uniqid();
-        }
-        $this->desc = $tax->desc;
-        $this->size = $tax->size;
-        return $this;
-    }
-
     public function Validate($tax)
     {
-        if ($this->ValidateDesc($tax->desc) && $this->ValidateSize($tax->size)) {
-            return true;
-        }
-    }
-
-    protected function ValidateDesc($desc) {
-        try {
-            if ($desc ?? '') {
-                $descLen = mb_strlen($desc);
-                if (($descLen <= 100) && ($descLen >= 0)) {
-                    preg_match('/([а-яёА-ЯЁ0-9\/ ])+/u', $desc, $regDesc);
-                    if ($regDesc ?? '') {
-                        if ($regDesc[0] == $desc) {
-                            return true;
+        function ValidateDesc($desc) {
+            try {
+                if ($desc ?? '') {
+                    $descLen = mb_strlen($desc);
+                    if (($descLen <= 100) && ($descLen >= 0)) {
+                        preg_match('/([а-яёА-ЯЁ0-9\/ ])+/u', $desc, $regDesc);
+                        if ($regDesc ?? '') {
+                            if ($regDesc[0] == $desc) {
+                                return true;
+                            } else {
+                                throw new Exception("Uncorrect Description Error", 1);
+                            }
                         } else {
                             throw new Exception("Uncorrect Description Error", 1);
                         }
                     } else {
-                        throw new Exception("Uncorrect Description Error", 1);
+                        throw new Exception("Length Desc Error", 1);
                     }
                 } else {
-                    throw new Exception("Length Desc Error", 1);
+                    throw new Exception("Empty Desc Error", 1);
+                    
                 }
-            } else {
-                throw new Exception("Empty Desc Error", 1);
-                
-            }
-        } catch (Exception $error) {
-            if ($error->getMessage() === 'Empty Desc Error') {
-                echo('Вы не ввели описание штрафа!');
-            }
-            if ($error->getMessage() === 'Length Desc Error') {
-                echo('Длина штрафа не должна превышать 100 символов!');
-            }
-            if ($error->getMessage() === 'Uncorrect Desc Error') {
-                echo('Описание штрафа должно состоять из букв русского алфавита, цифр и слеша!');
+            } catch (Exception $error) {
+                if ($error->getMessage() === 'Empty Desc Error') {
+                    echo('Вы не ввели описание штрафа!');
+                }
+                if ($error->getMessage() === 'Length Desc Error') {
+                    echo('Длина штрафа не должна превышать 100 символов!');
+                }
+                if ($error->getMessage() === 'Uncorrect Desc Error') {
+                    echo('Описание штрафа должно состоять из букв русского алфавита, цифр и слеша!');
+                }
             }
         }
-    }
-
-    protected function ValidateSize($size)
-    {
-        try {
-            if ($size ?? '') {
-                if (is_numeric($size)) {
-                    if ($size > 0 && $size <= 50000) {
-                        return true;
+        function ValidateSize($size)
+        {
+            try {
+                if ($size ?? '') {
+                    if (is_numeric($size)) {
+                        if ($size > 0 && $size <= 50000) {
+                            return true;
+                        } else {
+                            throw new Exception("Length Size Error", 1);
+                        }
                     } else {
-                        throw new Exception("Length Size Error", 1);
+                        throw new Exception("Uncorrect Size Error", 1);
                     }
+                    
                 } else {
-                    throw new Exception("Uncorrect Size Error", 1);
+                    throw new Exception("Empty Size Error", 1);
                 }
                 
-            } else {
-                throw new Exception("Empty Size Error", 1);
+            } catch (Exception $error) {
+                if ($error->getMessage() == 'Empty Size Error') {
+                    echo('Вы не указали размер штрафа!');
+                }
+                if ($error->getMessage() == 'Uncorrect Size Error') {
+                    echo('Размер штрафа должен состоять из цифр!');
+                }
+                if ($error->getMessage() == 'Empty Size Error') {
+                    echo('Размер штрафа не может превышать 50 тыс. рублей!');
+                }
             }
-            
-        } catch (Exception $error) {
-            if ($error->getMessage() == 'Empty Size Error') {
-                echo('Вы не указали размер штрафа!');
-            }
-            if ($error->getMessage() == 'Uncorrect Size Error') {
-                echo('Размер штрафа должен состоять из цифр!');
-            }
-            if ($error->getMessage() == 'Empty Size Error') {
-                echo('Размер штрафа не может превышать 50 тыс. рублей!');
-            }
+        }
+        if (ValidateDesc($tax->desc) && ValidateSize($tax->size)) {
+            return true;
         }
     }
 }
 
 interface ITax {
-    function Show();
     function Create($tax);
     function Update($tax);
-    function Delete($id);
-    function Get($id);
-    function Find($desc);
-    function Validate($tax);
-    function Set($tax);
 }

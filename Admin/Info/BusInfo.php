@@ -6,20 +6,19 @@ if ($_SESSION ?? '') {
         if ($_GET['bus'] ?? '') {
             $id = $_GET['bus'];
             require_once '../../Classes/Bus.php';
-            $bus = new Bus();
-            $bus = $bus->Get($id);
+            $bus = Bus::Get($id);
             if ($bus) {
-                echo('<!DOCTYPE html>
+                echo("<!DOCTYPE html>
                 <html>
                 <head>
-                    <meta charset="utf-8" />
-                    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-                    <title>Page Title</title>
-                    <meta name="viewport" content="width=device-width, initial-scale=1">
-                    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
+                    <meta charset='utf-8' />
+                    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+                    <title>Автобус {$bus[0]->Number}</title>
+                    <meta name='viewport' content='width=device-width, initial-scale=1'>
+                    <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css'>
                 </head>
                 <body>
-                <div class="container">');
+                <div class='container'>");
                 for ($i=0; $i < count($bus); $i++) { 
                     echo("<div class='creator-container row'>
                     <form method='POST' class='col'>
@@ -63,17 +62,16 @@ if ($_SESSION ?? '') {
         if ($_POST['bus'] ?? '') {
             $new_bus = json_decode($_POST['bus']);
             require_once '../../Classes/Bus.php';
-            $bus = new Bus('');
             if ($_FILES['photo'] ?? '') {
                 $photo = $_FILES['photo'];
-                if ($bus->Validate($new_bus, $photo)) {
-                    $bus = $bus->Set($new_bus, $photo);
+                if (Bus::Validate($new_bus, $photo)) {
+                    $bus = new Bus($new_bus, $photo);
                     $bus->Update($bus);
                 }
             } else {
                 $photo = '';
-                if ($bus->Validate($new_bus, $photo)) {
-                    $bus = $bus->Set($new_bus);
+                if (Bus::Validate($new_bus, $photo)) {
+                    $bus = new Bus($new_bus);
                     $bus = $bus->Update($bus);
                 }
                 

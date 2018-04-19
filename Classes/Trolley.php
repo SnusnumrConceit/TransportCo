@@ -6,6 +6,22 @@ class Trolley implements ITrolley{
     protected $statement;
     protected $photo;
 
+    public function __construct($trolley, $photo = null) {
+        if ($trolley->id ?? '') {
+            $this->id = $trolley->id;
+        } else {
+            $this->id = uniqid();
+        }
+        $this->number = $trolley->number;
+        if ($photo ?? '') {
+            $this->photo = base64_encode(file_get_contents($photo['tmp_name']));
+        } else {
+            $this->photo = $photo;
+        }
+        $this->route = $trolley->route;
+        $this->statement = $trolley->statement;
+    }
+
     public function Create($trolley)
     {   
         require_once 'DbConnect.php';
@@ -106,7 +122,7 @@ class Trolley implements ITrolley{
         
     }
 
-    function Show()
+    static function Show()
     {
         require_once 'DbConnect.php';
         $db = DbConnect();
@@ -120,179 +136,154 @@ class Trolley implements ITrolley{
         }
     }
 
-    public function Validate($tram, $photo)
+    static function Validate($tram, $photo)
     {
-        if ($this->ValidateNumber($tram->number) && $this->ValidatePhoto($photo) && $this->ValidateRoute($tram->route)
-            && $this->ValidateStatement($tram->statement)) {
-            return true;
+        function ValidateNumber($number) {
+            try {
+                if ($number ?? '') {
+                    if (mb_strlen($number) == 4) {
+                        preg_match('/([0-9]{4})/', $number, $regNumber);
+                        if ($regNumber ?? '') {
+                            if ($regNumber[0] === $number) {
+                                return true;
+                            } else {
+                                throw new Exception('Uncorrect Number Error', 1);    
+                            }
+                        } else {
+                            throw new Exception('Uncorrect Number Error', 1);
+                        }                    
+                    } else {
+                        throw new Exception('Length Number Error', 1);
+                    }       
+                } else {
+                    throw new Exception("Empty Number Error", 1);
+                    
+                }
+                
+            } catch (Exception $error){
+                if ($error->getMessage() === 'Empty Number Error') {
+                    echo("Вы не ввели номер троллейбуса!");
+                }
+                
+                if ($error->getMessage() === 'Length Number Error') {
+                    echo("Номер троллейбуса должен быть длиной 4 символа!");
+                }
+    
+                if ($error->getMessage() === 'Uncorrect Number Error') {
+                    echo("Неверный формат номера троллейбуса!");
+                }
+            }
         }
-    }
-
-    public function Set($trolley, $photo = null)
-    {
-        if ($trolley->id ?? '') {
-            $this->id = $trolley->id;
-        } else {
-            $this->id = uniqid();
-        }
-        $this->number = $trolley->number;
-        if ($photo ?? '') {
-            $this->photo = base64_encode(file_get_contents($photo['tmp_name']));
-        } else {
-            $this->photo = $photo;
-        }
-        $this->route = $trolley->route;
-        $this->statement = $trolley->statement;
-        return $this;
-    }
-
-protected function ValidateNumber($number) {
-        try {
-            if ($number ?? '') {
-                if (mb_strlen($number) == 11) {
-                    preg_match('/([А-Яа-я]{2}[0-9]{4}[6][4][R][U][S])/u', $number, $regNumber);
-                    if ($regNumber ?? '') {
-                        if ($regNumber[0] === $number) {
+    
+        function ValidatePhoto($photo)
+        {
+            try {
+                if (substr($_SERVER['HTTP_REFERER'], -37, 11) === 'trolleyinfo') {
+                    if (!($photo ?? '')) {
+                        return true;
+                    }
+                }
+                if (is_uploaded_file($photo['tmp_name'])) {
+                    if ($photo['size'] <= 2*1024*1024) {
+                        $ext = substr($photo['name'], -3, 3);
+                        $arrExt = ['jpg', 'png', 'JPG', 'PNG'];
+                        if (in_array($ext, $arrExt)) {
                             return true;
                         } else {
-                            throw new Exception('Uncorrect Number Error', 1);    
+                            throw new Exception("Extension Photo Error", 1);
                         }
                     } else {
-                        throw new Exception('Uncorrect Number Error', 1);
-                    }                    
-                } else {
-                    throw new Exception('Length Number Error', 1);
-                }       
-            } else {
-                throw new Exception("Empty Number Error", 1);
-                
-            }
-            
-        } catch (Exception $error){
-            if ($error->getMessage() === 'Empty Number Error') {
-                echo("Вы не ввели номер троллейбуса!");
-            }
-            
-            if ($error->getMessage() === 'Length Number Error') {
-                echo("Номер троллейбуса должен быть длиной 11 символов!");
-            }
-
-            if ($error->getMessage() === 'Uncorrect Number Error') {
-                echo("Неверный формат номера троллейбуса!");
-            }
-        }
-    }
-
-    protected function ValidatePhoto($photo)
-    {
-        try {
-            if (substr($_SERVER['HTTP_REFERER'], -37, 11) === 'trolleyinfo') {
-                if (!($photo ?? '')) {
-                    return true;
-                }
-            }
-            if (is_uploaded_file($photo['tmp_name'])) {
-                if ($photo['size'] <= 2*1024*1024) {
-                    $ext = substr($photo['name'], -3, 3);
-                    $arrExt = ['jpg', 'png', 'JPG', 'PNG'];
-                    if (in_array($ext, $arrExt)) {
-                        return true;
-                    } else {
-                        throw new Exception("Extension Photo Error", 1);
+                        throw new Exception("Size Photo Error", 1);
                     }
                 } else {
-                    throw new Exception("Size Photo Error", 1);
+                    throw new Exception("Download Photo Error", 1);
                 }
-            } else {
-                throw new Exception("Download Photo Error", 1);
-            }
-            
-        } catch (Exception $error) {
-            if ($error->getMessage() === 'Download Photo Error') {
-                echo('Вы не загрузили фотографию!');
-            }
-            
-            if ($error->getMessage() === 'Download Photo Error') {
-                echo('Размер фотографии не должен превышать более 2 Мбайт!');
-            }
-
-            if ($error->getMessage() === 'Download Photo Error') {
-                echo('Фотография должна быть с расширением jpg или png!');
+                
+            } catch (Exception $error) {
+                if ($error->getMessage() === 'Download Photo Error') {
+                    echo('Вы не загрузили фотографию!');
+                }
+                
+                if ($error->getMessage() === 'Download Photo Error') {
+                    echo('Размер фотографии не должен превышать более 2 Мбайт!');
+                }
+    
+                if ($error->getMessage() === 'Download Photo Error') {
+                    echo('Фотография должна быть с расширением jpg или png!');
+                }
             }
         }
-    }
-
-    protected function ValidateRoute($route)
-    {
-        try {
-            if ($route ?? '') {
-                if (is_numeric($route)) {
-                    if ($route > 0 && $route <= 300) {
-                        return true;
+    
+        function ValidateRoute($route)
+        {
+            try {
+                if ($route ?? '') {
+                    if (is_numeric($route)) {
+                        if ($route > 0 && $route <= 300) {
+                            return true;
+                        } else {
+                            throw new Exception("Length Route Error", 1);
+                        }
                     } else {
-                        throw new Exception("Length Route Error", 1);
+                        throw new Exception("Uncorrect Route Error", 1);
                     }
                 } else {
-                    throw new Exception("Uncorrect Route Error", 1);
+                    throw new Exception("Empty Route Error", 1);
+                    
                 }
-            } else {
-                throw new Exception("Empty Route Error", 1);
                 
-            }
-            
-        } catch (Exception $error) {
-            if ($error->getMessage() == 'Empty Route Error') {
-                echo('Вы не ввели номер маршрута!');
-            }
-
-            if ($error->getMessage() == 'Uncorrect Route Error') {
-                echo('Номер маршрута должен состоять из цифр!');
-            }
-
-            if ($error->getMessage() == 'Length Route Error') {
-                echo('Номер маршрута не должен превышать 300!');
+            } catch (Exception $error) {
+                if ($error->getMessage() == 'Empty Route Error') {
+                    echo('Вы не ввели номер маршрута!');
+                }
+    
+                if ($error->getMessage() == 'Uncorrect Route Error') {
+                    echo('Номер маршрута должен состоять из цифр!');
+                }
+    
+                if ($error->getMessage() == 'Length Route Error') {
+                    echo('Номер маршрута не должен превышать 300!');
+                }
             }
         }
-    }
-
-    protected function ValidateStatement($statement)
-    {
-        try {
-            if ($statement ?? '') {
-                $arrStatements = ['В ремонте', 'Рабочее'];
-                if (in_array($statement, $arrStatements)) {
-                    return true;
+    
+        function ValidateStatement($statement)
+        {
+            try {
+                if ($statement ?? '') {
+                    $arrStatements = ['В ремонте', 'Рабочее'];
+                    if (in_array($statement, $arrStatements)) {
+                        return true;
+                    } else {
+                        throw new Exception("Uncorrect Statement Error", 1);
+                    }
+                    
                 } else {
-                    throw new Exception("Uncorrect Statement Error", 1);
+                    throw new Exception("Empty Statement Error", 1);
                 }
                 
-            } else {
-                throw new Exception("Empty Statement Error", 1);
+            } catch (Exception $error) {
+                if ($error->getMessage() == 'Empty Statement Error') {
+                    echo('Вы не указали состояние троллейбуса!');
+                }
+    
+                if ($error->getMessage() === 'Uncorrect Statement Error') {
+                    echo('Вы указали некорректное состояние троллейбуса!');
+                }
+    
+                
             }
-            
-        } catch (Exception $error) {
-            if ($error->getMessage() == 'Empty Statement Error') {
-                echo('Вы не указали состояние троллейбуса!');
-            }
-
-            if ($error->getMessage() === 'Uncorrect Statement Error') {
-                echo('Вы указали некорректное состояние троллейбуса!');
-            }
-
-            
+        }
+        if (ValidateNumber($tram->number) && ValidatePhoto($photo) && ValidateRoute($tram->route)
+            && ValidateStatement($tram->statement)) {
+            return true;
         }
     }
 }
 
 interface ITrolley {
-    function Show();
     function Create($trolley);
     function Update($trolley);
-    function Delete($id);
-    function Get($id);
-    function Find($number);
-    function Validate($trolley, $photo);
-    function Set($trolley, $photo);
 }
 
 ?>

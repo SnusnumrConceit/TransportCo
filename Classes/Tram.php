@@ -6,6 +6,22 @@ class Tram implements ITram{
     protected $statement;
     protected $photo;
 
+    public function __construct($tram, $photo = null) {
+        if ($tram->id ?? '') {
+            $this->id = $tram->id;
+        } else {
+            $this->id = uniqid();
+        }
+        $this->number = $tram->number;
+        if ($photo ?? '') {
+            $this->photo = base64_encode(file_get_contents($photo['tmp_name']));
+        } else {
+            $this->photo = $photo;
+        }
+        $this->route = $tram->route;
+        $this->statement = $tram->statement;        
+    }
+
     public function Create($tram)
     {   
         require_once 'DbConnect.php';
@@ -33,7 +49,7 @@ class Tram implements ITram{
         }
     }
 
-    public function Delete($id)
+    static function Delete($id)
     {
         require_once 'DbConnect.php';
         $db = DbConnect();
@@ -53,7 +69,7 @@ class Tram implements ITram{
         } 
     }
 
-    public function Find($number)
+    static function Find($number)
     {
         require_once 'DbConnect.php';
         $db = DbConnect();
@@ -67,7 +83,7 @@ class Tram implements ITram{
         }
     }
 
-    function GetWorking()
+    static function GetWorking()
     {
         require_once 'DbConnect.php';
         $db = DbConnect();
@@ -106,7 +122,7 @@ class Tram implements ITram{
         
     }
 
-    function Show()
+    static function Show()
     {
         require_once 'DbConnect.php';
         $db = DbConnect();
@@ -122,172 +138,148 @@ class Tram implements ITram{
 
     public function Validate($tram, $photo)
     {
-        if ($this->ValidateNumber($tram->number) && $this->ValidatePhoto($photo) && $this->ValidateRoute($tram->route)
-            && $this->ValidateStatement($tram->statement)) {
+        function ValidateNumber($number) {
+            try {
+                if ($number ?? '') {
+                    if (is_numeric($number)) {
+                        if (strlen($number) == 4) {
+                            return true;
+                        } else {
+                            throw new Exception('Length Number Error', 1);
+                        }                    
+                    } else {
+                        throw new Exception('Uncorrect Number Error', 1);
+                    }       
+                } else {
+                    throw new Exception("Empty Number Error", 1);
+                    
+                }
+                
+            } catch (Exception $error){
+                if ($error->getMessage() === 'Empty Number Error') {
+                    echo("Вы не ввели номер трамвая!");
+                }
+                
+                if ($error->getMessage() === 'Length Number Error') {
+                    echo("Номер трамвая должен быть длиной 4 символа!");
+                }
+    
+                if ($error->getMessage() === 'Uncorrect Number Error') {
+                    echo("Номер трамвая должен состоять из цифр!");
+                }
+            }
+        }
+    
+        function ValidatePhoto($photo)
+        {
+            try {
+                if (substr($_SERVER['HTTP_REFERER'], -31, 8) === 'traminfo') {
+                    if (!($photo ?? '')) {
+                        return true;
+                    }
+                }
+                if (is_uploaded_file($photo['tmp_name'])) {
+                    if ($photo['size'] <= 2*1024*1024) {
+                        $ext = substr($photo['name'], -3, 3);
+                        $arrExt = ['jpg', 'png', 'JPG', 'PNG'];
+                        if (in_array($ext, $arrExt)) {
+                            return true;
+                        } else {
+                            throw new Exception("Extension Photo Error", 1);
+                        }
+                    } else {
+                        throw new Exception("Size Photo Error", 1);
+                    }
+                } else {
+                    throw new Exception("Download Photo Error", 1);
+                }
+                
+            } catch (Exception $error) {
+                if ($error->getMessage() === 'Download Photo Error') {
+                    echo('Вы не загрузили фотографию!');
+                }
+                
+                if ($error->getMessage() === 'Download Photo Error') {
+                    echo('Размер фотографии не должен превышать более 2 Мбайт!');
+                }
+    
+                if ($error->getMessage() === 'Download Photo Error') {
+                    echo('Фотография должна быть с расширением jpg или png!');
+                }
+            }
+        }
+    
+        function ValidateRoute($route)
+        {
+            try {
+                if ($route ?? '') {
+                    if (is_numeric($route)) {
+                        if ($route > 0 && $route <= 300) {
+                            return true;
+                        } else {
+                            throw new Exception("Length Route Error", 1);
+                        }
+                    } else {
+                        throw new Exception("Uncorrect Route Error", 1);
+                    }
+                } else {
+                    throw new Exception("Empty Route Error", 1);
+                    
+                }
+                
+            } catch (Exception $error) {
+                if ($error->getMessage() == 'Empty Route Error') {
+                    echo('Вы не ввели номер маршрута!');
+                }
+    
+                if ($error->getMessage() == 'Uncorrect Route Error') {
+                    echo('Номер маршрута должен состоять из цифр!');
+                }
+    
+                if ($error->getMessage() == 'Length Route Error') {
+                    echo('Номер маршрута не должен превышать 300!');
+                }
+            }
+        }
+    
+        function ValidateStatement($statement)
+        {
+            try {
+                if ($statement ?? '') {
+                    $arrStatements = ['В ремонте', 'Рабочее'];
+                    if (in_array($statement, $arrStatements)) {
+                        return true;
+                    } else {
+                        throw new Exception("Uncorrect Statement Error", 1);
+                    }
+                    
+                } else {
+                    throw new Exception("Empty Statement Error", 1);
+                }
+                
+            } catch (Exception $error) {
+                if ($error->getMessage() == 'Empty Statement Error') {
+                    echo('Вы не указали состояние трамвая!');
+                }
+    
+                if ($error->getMessage() === 'Uncorrect Statement Error') {
+                    echo('Вы указали некорректное состояние трамвая!');
+                }
+    
+                
+            }
+        }
+        if (ValidateNumber($tram->number) && ValidatePhoto($photo) && ValidateRoute($tram->route)
+            && ValidateStatement($tram->statement)) {
             return true;
         }
-    }
-
-    public function Set($tram, $photo = null)
-    {
-        if ($tram->id ?? '') {
-            $this->id = $tram->id;
-        } else {
-            $this->id = uniqid();
-        }
-        $this->number = $tram->number;
-        if ($photo ?? '') {
-            $this->photo = base64_encode(file_get_contents($photo['tmp_name']));
-        } else {
-            $this->photo = $photo;
-        }
-        $this->route = $tram->route;
-        $this->statement = $tram->statement;
-        return $this;
-    }
-
-    protected function ValidateNumber($number) {
-        try {
-            if ($number ?? '') {
-                if (is_numeric($number)) {
-                    if (strlen($number) == 4) {
-                        return true;
-                    } else {
-                        throw new Exception('Length Number Error', 1);
-                    }                    
-                } else {
-                    throw new Exception('Uncorrect Number Error', 1);
-                }       
-            } else {
-                throw new Exception("Empty Number Error", 1);
-                
-            }
-            
-        } catch (Exception $error){
-            if ($error->getMessage() === 'Empty Number Error') {
-                echo("Вы не ввели номер трамвая!");
-            }
-            
-            if ($error->getMessage() === 'Length Number Error') {
-                echo("Номер трамвая должен быть длиной 4 символа!");
-            }
-
-            if ($error->getMessage() === 'Uncorrect Number Error') {
-                echo("Номер трамвая должен состоять из цифр!");
-            }
-        }
-    }
-
-    protected function ValidatePhoto($photo)
-    {
-        try {
-            if (substr($_SERVER['HTTP_REFERER'], -31, 8) === 'traminfo') {
-                if (!($photo ?? '')) {
-                    return true;
-                }
-            }
-            if (is_uploaded_file($photo['tmp_name'])) {
-                if ($photo['size'] <= 2*1024*1024) {
-                    $ext = substr($photo['name'], -3, 3);
-                    $arrExt = ['jpg', 'png', 'JPG', 'PNG'];
-                    if (in_array($ext, $arrExt)) {
-                        return true;
-                    } else {
-                        throw new Exception("Extension Photo Error", 1);
-                    }
-                } else {
-                    throw new Exception("Size Photo Error", 1);
-                }
-            } else {
-                throw new Exception("Download Photo Error", 1);
-            }
-            
-        } catch (Exception $error) {
-            if ($error->getMessage() === 'Download Photo Error') {
-                echo('Вы не загрузили фотографию!');
-            }
-            
-            if ($error->getMessage() === 'Download Photo Error') {
-                echo('Размер фотографии не должен превышать более 2 Мбайт!');
-            }
-
-            if ($error->getMessage() === 'Download Photo Error') {
-                echo('Фотография должна быть с расширением jpg или png!');
-            }
-        }
-    }
-
-    protected function ValidateRoute($route)
-    {
-        try {
-            if ($route ?? '') {
-                if (is_numeric($route)) {
-                    if ($route > 0 && $route <= 300) {
-                        return true;
-                    } else {
-                        throw new Exception("Length Route Error", 1);
-                    }
-                } else {
-                    throw new Exception("Uncorrect Route Error", 1);
-                }
-            } else {
-                throw new Exception("Empty Route Error", 1);
-                
-            }
-            
-        } catch (Exception $error) {
-            if ($error->getMessage() == 'Empty Route Error') {
-                echo('Вы не ввели номер маршрута!');
-            }
-
-            if ($error->getMessage() == 'Uncorrect Route Error') {
-                echo('Номер маршрута должен состоять из цифр!');
-            }
-
-            if ($error->getMessage() == 'Length Route Error') {
-                echo('Номер маршрута не должен превышать 300!');
-            }
-        }
-    }
-
-    protected function ValidateStatement($statement)
-    {
-        try {
-            if ($statement ?? '') {
-                $arrStatements = ['В ремонте', 'Рабочее'];
-                if (in_array($statement, $arrStatements)) {
-                    return true;
-                } else {
-                    throw new Exception("Uncorrect Statement Error", 1);
-                }
-                
-            } else {
-                throw new Exception("Empty Statement Error", 1);
-            }
-            
-        } catch (Exception $error) {
-            if ($error->getMessage() == 'Empty Statement Error') {
-                echo('Вы не указали состояние трамвая!');
-            }
-
-            if ($error->getMessage() === 'Uncorrect Statement Error') {
-                echo('Вы указали некорректное состояние трамвая!');
-            }
-
-            
-        }
-    }
+    }    
 }
 
 interface ITram {
-    function Show();
     function Create($tram);
     function Update($tram);
-    function Delete($id);
-    function Get($id);
-    function Find($number);
     function Validate($tram, $photo);
-    function Set($tram, $photo);
 }
 
 ?>

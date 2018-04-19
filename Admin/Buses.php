@@ -6,9 +6,7 @@ if ($_SESSION ?? '') {
         if ($_GET['number'] ?? '') {
             require_once '../Classes/Bus.php';
             $number = $_GET['number'];
-            $bus = new Bus();
-            $buses = $bus->Find($number);
-
+            $buses = Bus::Find($number);
 ######_____________ПОИСКОВАЯ_____VIEW___________########
 print <<<POST
 <!DOCTYPE html>
@@ -95,14 +93,13 @@ POST;
             echo("</div>
         </div>
         <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
+        <script src='https://rawgit.com/RobinHerbots/jquery.inputmask/3.x/dist/jquery.inputmask.bundle.js'></script>
         <script src='../Scripts/Admin/buses_scripts.js'></script>
     </body>
 </html>");
 
         }
         else {
-
-
 ########______ОСНОВНАЯ___VIEW______######
 print <<<POST
 <!DOCTYPE html>
@@ -120,7 +117,7 @@ print <<<POST
                 <a class="btn btn-default offset-sm-1" href="admin.php">На главную</a>
                 <form method="GET" class="form-inline col">
                     <div class="form group offset-sm-4">
-                        <input type="text" class="form-control" placeholder="Введите название" id="find-input">
+                        <input type="text" class="form-control" placeholder="Введите номер" id="find-input">
                         <button class="btn btn-primary" id="btn-find" type="button">Найти</button>
                     </div>
                 </form>
@@ -152,8 +149,7 @@ print <<<POST
             <div class="row">
 POST;
             require_once '../Classes/Bus.php';
-            $bus = new Bus();
-            $buses = $bus->Show();
+            $buses = Bus::Show();
 
             if ($buses) {
                 echo("<table class='table table-hover'>
@@ -192,6 +188,7 @@ POST;
             echo("</div>
         </div>
         <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
+        <script src='https://rawgit.com/RobinHerbots/jquery.inputmask/3.x/dist/jquery.inputmask.bundle.js'></script>
         <script src='../Scripts/Admin/buses_scripts.js'></script>
     </body>
 </html>");
@@ -202,9 +199,9 @@ POST;
                 $photo = $_FILES['photo'];
                 $inputData = json_decode($_POST['bus']);
                 require_once '../Classes/Bus.php';
-                $bus = new Bus();
-                if ($bus->Validate($inputData, $photo)) {
-                    $bus = $bus->Set($inputData, $photo);
+                
+                if (Bus::Validate($inputData, $photo)) {
+                    $bus = new Bus($inputData, $photo);
                     $bus->Create($bus);
                 }
             } else {
@@ -213,9 +210,8 @@ POST;
             
         } elseif ($_POST['id'] ?? '') {
             require_once '../Classes/Bus.php';
-            $bus = new Bus();
             $id = $_POST['id'];
-            $bus->Delete($id);
+            Bus::Delete($id);
         }
     } else {
         header('location: index.php');

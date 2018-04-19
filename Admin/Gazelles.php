@@ -6,8 +6,7 @@ if ($_SESSION ?? '') {
         if ($_GET['number'] ?? '') {
             require_once '../Classes/Gazelle.php';
             $number = $_GET['number'];
-            $gazelle = new Gazelle();
-            $gazelles = $gazelle->Find($number);
+            $gazelles = Gazelle::Find($number);
 
 ######_____________ПОИСКОВАЯ_____VIEW___________########
 print <<<POST
@@ -95,6 +94,7 @@ POST;
             echo("</div>
         </div>
         <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
+        <script src='https://rawgit.com/RobinHerbots/jquery.inputmask/3.x/dist/jquery.inputmask.bundle.js'></script>
         <script src='../Scripts/Admin/gazelles_scripts.js'></script>
     </body>
 </html>");
@@ -152,8 +152,7 @@ print <<<POST
             <div class="row">
 POST;
             require_once '../Classes/Gazelle.php';
-            $gazelle = new Gazelle();
-            $gazelles = $gazelle->Show();
+            $gazelles = Gazelle::Show();
 
             if ($gazelles) {
                 echo("<table class='table table-hover'>
@@ -192,6 +191,7 @@ POST;
             echo("</div>
         </div>
         <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
+        <script src='https://rawgit.com/RobinHerbots/jquery.inputmask/3.x/dist/jquery.inputmask.bundle.js'></script>
         <script src='../Scripts/Admin/gazelles_scripts.js'></script>
     </body>
 </html>");
@@ -202,9 +202,8 @@ POST;
                 $photo = $_FILES['photo'];
                 $inputData = json_decode($_POST['gazelle']);
                 require_once '../Classes/Gazelle.php';
-                $gazelle = new Gazelle();
-                if ($gazelle->Validate($inputData, $photo)) {
-                    $gazelle = $gazelle->Set($inputData, $photo);
+                if (Gazelle::Validate($inputData, $photo)) {
+                    $gazelle = new Gazelle($inputData, $photo);
                     $gazelle->Create($gazelle);
                 }
             } else {
@@ -213,9 +212,8 @@ POST;
             
         } elseif ($_POST['id'] ?? '') {
             require_once '../Classes/Gazelle.php';
-            $gazelle = new Gazelle();
             $id = $_POST['id'];
-            $gazelle->Delete($id);
+            Gazelle::Delete($id);
         }
     } else {
         header('location: admin.php');

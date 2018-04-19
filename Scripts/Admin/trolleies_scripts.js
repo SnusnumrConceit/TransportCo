@@ -106,10 +106,9 @@ $(document).ready(function () {
     function ValidateNumber(number) {
         try {
             if (number !== null && number !== undefined && number.length != 0) {
-                if (number.length == 11) {
-                    if (/([а-я]{2}[0-9]{4}[6][4][R][U][S])/i.exec(number) !== null) {
-                        console.log(/([а-я]{2}[0-9]{4}[6][4][R][U][S])/i.exec(number)[0]);
-                        if (/([а-я]{2}[0-9]{4}[6][4][R][U][S])/i.exec(number)[0] === number) {
+                if (number.length == 4) {
+                    if (/([0-9]{4})/i.exec(number) !== null) {
+                        if (/([0-9]{4})/i.exec(number)[0] === number) {
                             return true;
                         } else {
                             throw new Error('Uncorrect Number Error');    
@@ -131,7 +130,7 @@ $(document).ready(function () {
             }
             
             if (error.message === 'Length Number Error') {
-                alert('Номер троллейбуса долен быть длиной 11 символов!');
+                alert('Номер троллейбуса долен быть длиной 4 символа!');
             }
             
             if (error.message === 'Uncorrect Number Error') {

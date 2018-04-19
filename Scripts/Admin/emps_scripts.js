@@ -134,8 +134,8 @@ $(document).ready(function () {
             try {
                 if (lastName !== undefined && lastName !== null && lastName.length !== 0) {
                     if (lastName.length >= 3 && lastName.length <= 30) {
-                        if (/([А-Я][a-я]{2,})/.exec(lastName) !== null) {
-                            if (/([А-Я][a-я]{2,})/.exec(lastName)[0] === lastName) {
+                        if (/([А-ЯЁ][a-яё]{2,})/.exec(lastName) !== null) {
+                            if (/([А-ЯЁ][a-яё]{2,})/.exec(lastName)[0] === lastName) {
                                 return true;
                             } else {
                                 throw new Error('Wrong LName Data');
@@ -167,8 +167,8 @@ $(document).ready(function () {
             try {
                 if (firstName !== undefined && firstName !== null && firstName.length !== 0) {
                     if (firstName.length >= 4 && firstName.length <= 15) {
-                        if (/([А-Я][a-я]{3,})/.exec(firstName) !== null) {
-                            if (/([А-Я][a-я]{3,})/.exec(firstName)[0] === firstName) {
+                        if (/([А-ЯЁ][a-яё]{3,})/.exec(firstName) !== null) {
+                            if (/([А-ЯЁ][a-яё]{3,})/.exec(firstName)[0] === firstName) {
                                 return true;
                             } else {
                                 throw new Error('Wrong FName Data');
@@ -200,8 +200,8 @@ $(document).ready(function () {
             try {
                 if (middleName !== undefined && middleName !== null && middleName.length !== 0) {
                     if (middleName.length >= 6 && middleName.length <= 24) {
-                        if (/([А-Я][a-я]{5,})/.exec(middleName) !== null) {
-                            if (/([А-Я][a-я]{5,})/.exec(middleName)[0] === middleName) {
+                        if (/([А-ЯЁ][a-яё]{5,})/i.exec(middleName) !== null) {
+                            if (/([А-ЯЁ][a-яё]{5,})/.exec(middleName)[0] === middleName) {
                                 return true;
                             } else {
                                 throw new Error('Wrong MName Data');

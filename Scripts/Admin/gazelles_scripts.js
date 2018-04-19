@@ -13,6 +13,8 @@ $(document).ready(function () {
     
     creatorContainer.css('display', 'none');
 
+    numberForm.inputmask('AA999964RUS');
+
     btnOpen.click(function () {
         creatorContainer.slideToggle();
     })
@@ -127,15 +129,15 @@ $(document).ready(function () {
             }
         } catch (error) {
             if (error.message === 'Empty Number Error') {
-                alert('Вы не ввели номер автобуса!');
+                alert('Вы не ввели номер маршрутного такси!');
             }
             
             if (error.message === 'Length Number Error') {
-                alert('Номер автобуса долен быть длиной 11 символов!');
+                alert('Номер маршрутного такси долен быть длиной 11 символов!');
             }
             
             if (error.message === 'Uncorrect Number Error') {
-                alert('Неверный формат номера автобуса!');
+                alert('Неверный формат номера маршрутного такси!');
             }
         }
     }

@@ -6,20 +6,19 @@ if ($_SESSION ?? '') {
         if ($_GET['tram'] ?? '') {
             $id = $_GET['tram'];
             require_once '../../Classes/Tram.php';
-            $tram = new Tram();
-            $tram = $tram->Get($id);
+            $tram = Tram::Get($id);
             if ($tram) {
-                echo('<!DOCTYPE html>
+                echo("<!DOCTYPE html>
                 <html>
                 <head>
-                    <meta charset="utf-8" />
-                    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-                    <title>Page Title</title>
-                    <meta name="viewport" content="width=device-width, initial-scale=1">
-                    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
+                    <meta charset='utf-8' />
+                    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+                    <title>Трамвай {$tram[0]->Number}</title>
+                    <meta name='viewport' content='width=device-width, initial-scale=1'>
+                    <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css'>
                 </head>
                 <body>
-                <div class="container">');
+                <div class='container'>");
                 for ($i=0; $i < count($tram); $i++) { 
                     echo("<div class='creator-container row'>
                     <form method='POST' class='col'>
@@ -63,17 +62,16 @@ if ($_SESSION ?? '') {
         if ($_POST['tram'] ?? '') {
             $new_tram = json_decode($_POST['tram']);
             require_once '../../Classes/Tram.php';
-            $tram = new Tram('');
             if ($_FILES['photo'] ?? '') {
                 $photo = $_FILES['photo'];
-                if ($tram->Validate($new_tram, $photo)) {
-                    $tram = $tram->Set($new_tram, $photo);
+                if (Tram::Validate($new_tram, $photo)) {
+                    $tram = new Tram($new_tram, $photo);
                     $tram->Update($tram);
                 }
             } else {
                 $photo = '';
-                if ($tram->Validate($new_tram, $photo)) {
-                    $tram = $tram->Set($new_tram);
+                if (Tram::Validate($new_tram, $photo)) {
+                    $tram = new Tram($new_tram);
                     $tram = $tram->Update($tram);
                 }
                 

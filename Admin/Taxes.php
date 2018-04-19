@@ -6,8 +6,7 @@ if ($_SESSION ?? '') {
         if ($_GET['desc'] ?? '') {
             require_once '../Classes/Tax.php';
             $desc = $_GET['desc'];
-            $tax = new Tax();
-            $taxes = $tax->Find($desc);
+            $taxes = Tax::Find($desc);
 
 ######_____________ПОИСКОВАЯ_____VIEW___________########
 print <<<POST
@@ -33,19 +32,13 @@ print <<<POST
             </div>
             <div class="creator-container row">
                 <form method="POST" class="col">
-                    <div class="form-group col-4">
+                <div class="form-group col-4">
+                        <label class="col-form-label">Штраф</label>
+                        <input type="text" class="form-control" id="tax">
+                </div>    
+                <div class="form-group col-4">
                         <label class="col-form-label" for='size'>Размер</label>
                         <input type="text" class="form-control" id="size">
-                    </div>
-                    <div class="form-group col-4">
-                        <label class="col-form-label">Штраф</label>
-                        <select type="text" class="form-control" id="tax">
-                            <option value='Превышение 20 км/ч'>Превышение 20 км/ч</option>
-                            <option value='Превышение 40 км/ч'>Превышение 40 км/ч</option>
-                            <option value='Превышение 60 км/ч'>Превышение 60 км/ч</option>
-                            <option value='Проезд на красный свет'>Проезд на красный свет</option>
-                            <option value='Несоблюдение дистанции'>Несоблюдение дистанции</option>
-                        </select>
                     </div>
                     <button class="btn btn-primary row" id="btn-send" type="button">Отправить</button>
                 </form>
@@ -54,12 +47,12 @@ print <<<POST
 POST;
             if ($taxes) {
                 echo("<table class='table table-hover'>
-                        <thead class='thead-dark' class='thead class='thead-dark'-dark'>
+                        <thead class='thead-dark'>
                             <th class='d-none'></th>
                             <th>Описание</th>
                             <th>Размер</th>
                             <th>Операции</th>
-                        </thead class='thead-dark'>
+                        </thead>
                         <tbody>");
                 $taxesLength = count($taxes);
                 for ($i=0; $i < $taxesLength; $i++) {
@@ -98,6 +91,11 @@ print <<<POST
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
+        <style>
+            thead {
+                background-color: #d91717;
+            }
+        </style>
     </head>
     <body>
         <div class="container">
@@ -113,19 +111,13 @@ print <<<POST
             </div>
             <div class="creator-container row">
                 <form method="POST" class="col">
-                    <div class="form-group col-4">
+                <div class="form-group col-4">
+                        <label class="col-form-label">Штраф</label>
+                        <input type="text" class="form-control" id="tax">
+                </div>    
+                <div class="form-group col-4">
                         <label class="col-form-label" for='size'>Размер</label>
                         <input type="text" class="form-control" id="size">
-                    </div>
-                    <div class="form-group col-4">
-                        <label class="col-form-label">Штраф</label>
-                        <select type="text" class="form-control" id="tax">
-                            <option value='Превышение 20 км/ч'>Превышение 20 км/ч</option>
-                            <option value='Превышение 40 км/ч'>Превышение 40 км/ч</option>
-                            <option value='Превышение 60 км/ч'>Превышение 60 км/ч</option>
-                            <option value='Проезд на красный свет'>Проезд на красный свет</option>
-                            <option value='Несоблюдение дистанции'>Несоблюдение дистанции</option>
-                        </select>
                     </div>
                     <button class="btn btn-primary row" id="btn-send" type="button">Отправить</button>
                 </form>
@@ -133,8 +125,7 @@ print <<<POST
             <div class="row">
 POST;
             require_once '../Classes/Tax.php';
-            $tax = new Tax();
-            $taxes = $tax->Show();
+            $taxes = Tax::Show();
 
             if ($taxes) {
                 echo("<table class='table table-hover'>
@@ -173,16 +164,14 @@ POST;
         if ($_POST['tax'] ?? '') {
                 $inputData = json_decode($_POST['tax']);
                 require_once '../Classes/Tax.php';
-                $tax = new Tax();
-                if ($tax->Validate($inputData)) {
-                    $tax = $tax->Set($inputData);
+                if (Tax::Validate($inputData)) {
+                    $tax = new Tax($inputData);
                     $tax->Create($tax);
                 }
         } elseif ($_POST['id'] ?? '') {
             require_once '../Classes/Tax.php';
-            $tax = new Tax();
             $id = $_POST['id'];
-            $tax->Delete($id);
+            Tax::Delete($id);
         }
     } else {
         header('location: index.php');

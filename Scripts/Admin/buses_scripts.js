@@ -13,6 +13,8 @@ $(document).ready(function () {
     
     creatorContainer.css('display', 'none');
 
+    numberForm.inputmask('AA999964RUS');
+
     btnOpen.click(function () {
         creatorContainer.slideToggle();
     })
@@ -23,7 +25,7 @@ $(document).ready(function () {
                 var position = index +1,
                     bus_id = $('tr:nth-child('+position+') .d-none').text();
                 $.post('buses.php', {id: bus_id}, function (response) {
-                    if (response.length != 0) {
+                    if (response.trim().length != 0) {
                         alert(response);
                     } else {
                         window.location.reload();
@@ -85,7 +87,7 @@ $(document).ready(function () {
                         contentType: false,
                         processData: false,
                         success: function (response) {  
-                            if (response.length != 0) {
+                            if (response.trim().length != 0) {
                                 alert(response);
                             } else {
                                 window.location.reload();
@@ -107,9 +109,8 @@ $(document).ready(function () {
         try {
             if (number !== null && number !== undefined && number.length != 0) {
                 if (number.length == 11) {
-                    if (/([а-я]{2}[0-9]{4}[6][4][R][U][S])/i.exec(number) !== null) {
-                        console.log(/([а-я]{2}[0-9]{4}[6][4][R][U][S])/i.exec(number)[0]);
-                        if (/([а-я]{2}[0-9]{4}[6][4][R][U][S])/i.exec(number)[0] === number) {
+                    if (/([А-Я]{2}[0-9]{4}[6][4][R][U][S])/i.exec(number) !== null) {
+                        if (/([А-Я]{2}[0-9]{4}[6][4][R][U][S])/i.exec(number)[0] === number) {
                             return true;
                         } else {
                             throw new Error('Uncorrect Number Error');    

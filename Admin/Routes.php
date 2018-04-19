@@ -34,8 +34,8 @@ ROUTES;
             echo("<tr>
                     <td class='d-none'>{$routes[$i]->Emp_id}</td>
                     <td>{$routes[$i]->Employee}</td>
-                    <td>{$routes[$i]->Number}</td>
                     <td>{$routes[$i]->Route}</td>
+                    <td>{$routes[$i]->Number}</td>
                     <td><button class='btn btn-warning'>Снять с маршрута</button></td>
                 </tr>");
         }

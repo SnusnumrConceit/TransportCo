@@ -6,8 +6,7 @@ if ($_SESSION ?? '') {
         if ($_GET['number'] ?? '') {
             require_once '../Classes/Tram.php';
             $number = $_GET['number'];
-            $tram = new Tram();
-            $trams = $tram->Find($number);
+            $trams = Tram::Find($number);
 
 ######_____________ПОИСКОВАЯ_____VIEW___________########
 print <<<POST
@@ -26,7 +25,7 @@ print <<<POST
                 <a class="btn btn-default offset-sm-1" href="admin.php">На главную</a>
                 <form method="GET" class="form-inline col" id="find-input">
                     <div class="form group offset-sm-4">
-                        <input type="text" class="form-control" placeholder="Введите название" value="{$number}">
+                        <input type="text" class="form-control" placeholder="Введите номер" value="{$number}">
                         <button class="btn btn-primary">Найти</button>
                     </div>
                 </form>
@@ -120,7 +119,7 @@ print <<<POST
                 <a class="btn btn-default offset-sm-1" href="admin.php">На главную</a>
                 <form method="GET" class="form-inline col">
                     <div class="form group offset-sm-4">
-                        <input type="text" class="form-control" placeholder="Введите название" id="find-input">
+                        <input type="text" class="form-control" placeholder="Введите номер" id="find-input">
                         <button class="btn btn-primary" id="btn-find" type="button">Найти</button>
                     </div>
                 </form>
@@ -152,8 +151,7 @@ print <<<POST
             <div class="row">
 POST;
             require_once '../Classes/Tram.php';
-            $tram = new Tram();
-            $trams = $tram->Show();
+            $trams = Tram::Show();
 
             if ($trams) {
                 echo("<table class='table table-hover'>
@@ -202,9 +200,8 @@ POST;
                 $photo = $_FILES['photo'];
                 $inputData = json_decode($_POST['tram']);
                 require_once '../Classes/Tram.php';
-                $tram = new Tram();
-                if ($tram->Validate($inputData, $photo)) {
-                    $tram = $tram->Set($inputData, $photo);
+                if (Tram::Validate($inputData, $photo)) {
+                    $tram = new Tram($inputData, $photo);
                     $tram->Create($tram);
                 }
             } else {
@@ -213,9 +210,8 @@ POST;
             
         } elseif ($_POST['id'] ?? '') {
             require_once '../Classes/Tram.php';
-            $tram = new Tram();
             $id = $_POST['id'];
-            $tram->Delete($id);
+            Tram::Delete($id);
         }
     } else {
         header('location: admin.php');

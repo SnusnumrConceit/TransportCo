@@ -6,15 +6,14 @@ if ($_SESSION ?? '') {
         if ($_GET['number'] ?? '') {
             require_once '../Classes/Trolley.php';
             $number = $_GET['number'];
-            $trolley = new Trolley();
-            $trolleies = $trolley->Find($number);
+            $trolleies = Trolley::Find($number);
 
 ######_____________ПОИСКОВАЯ_____VIEW___________########
 print <<<POST
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Трамваи</title>
+        <title>Троллейбусы</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
@@ -26,7 +25,7 @@ print <<<POST
                 <a class="btn btn-default offset-sm-1" href="admin.php">На главную</a>
                 <form method="GET" class="form-inline col" id="find-input">
                     <div class="form group offset-sm-4">
-                        <input type="text" class="form-control" placeholder="Введите название" value="{$number}">
+                        <input type="text" class="form-control" placeholder="Введите номер" value="{$number}">
                         <button class="btn btn-primary">Найти</button>
                     </div>
                 </form>
@@ -108,7 +107,7 @@ print <<<POST
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Трамваи</title>
+        <title>Троллейбусы</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
@@ -120,7 +119,7 @@ print <<<POST
                 <a class="btn btn-default offset-sm-1" href="admin.php">На главную</a>
                 <form method="GET" class="form-inline col">
                     <div class="form group offset-sm-4">
-                        <input type="text" class="form-control" placeholder="Введите название" id="find-input">
+                        <input type="text" class="form-control" placeholder="Введите номер" id="find-input">
                         <button class="btn btn-primary" id="btn-find" type="button">Найти</button>
                     </div>
                 </form>
@@ -152,8 +151,7 @@ print <<<POST
             <div class="row">
 POST;
             require_once '../Classes/Trolley.php';
-            $trolley = new Trolley();
-            $trolleies = $trolley->Show();
+            $trolleies = Trolley::Show();
 
             if ($trolleies) {
                 echo("<table class='table table-hover'>
@@ -202,9 +200,8 @@ POST;
                 $photo = $_FILES['photo'];
                 $inputData = json_decode($_POST['trolley']);
                 require_once '../Classes/Trolley.php';
-                $trolley = new Trolley();
-                if ($trolley->Validate($inputData, $photo)) {
-                    $trolley = $trolley->Set($inputData, $photo);
+                if (Trolley::Validate($inputData, $photo)) {
+                    $trolley = new Trolley($inputData, $photo);
                     $trolley->Create($trolley);
                 }
             } else {
@@ -213,9 +210,8 @@ POST;
             
         } elseif ($_POST['id'] ?? '') {
             require_once '../Classes/Trolley.php';
-            $trolley = new Trolley();
             $id = $_POST['id'];
-            $trolley->Delete($id);
+            Trolley::Delete($id);
         }
     } else {
         header('location: index.php');

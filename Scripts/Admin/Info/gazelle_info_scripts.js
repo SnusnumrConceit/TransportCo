@@ -73,11 +73,11 @@ $(document).ready(function (){
             }
             
             if (error.message === 'Length Number Error') {
-                alert('Номер маршрутного такси долен быть длиной 4 символа!');
+                alert('Номер маршрутного такси должен быть длиной 11 символов!');
             }
             
             if (error.message === 'Uncorrect Number Error') {
-                alert('Номер маршрутного такси должен состоять из цифр!');
+                alert('Неверный формат номера маршрутного такси!');
             }
         }
     }

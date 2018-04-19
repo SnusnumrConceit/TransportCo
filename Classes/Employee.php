@@ -18,7 +18,6 @@ class Employee implements IEmployee{
         $this->middleName = $emp->middleName;
         $this->phoneNumber = $emp->phone;
         $this->birthday = $emp->birthday;
-        return $this;
     }
 
     public function Create($emp)
@@ -31,7 +30,7 @@ class Employee implements IEmployee{
         }
     }
 
-    public function Delete($id)
+    static function Delete($id)
     {
         require_once 'DbConnect.php';
         $db = DbConnect();
@@ -39,7 +38,7 @@ class Employee implements IEmployee{
         $deleteEmployeeQuery->execute(array($id));        
     }
 
-    public function Get($id)
+    static function Get($id)
     {
         require_once 'DbConnect.php';
         $db = DbConnect();
@@ -54,7 +53,7 @@ class Employee implements IEmployee{
         
     }
 
-    public function Find($lastName)
+    static function Find($lastName)
     {
         require_once 'DbConnect.php';
         $db = DbConnect();
@@ -88,7 +87,7 @@ class Employee implements IEmployee{
                         if ($lastNameLength >= 3 && $lastNameLength <= 30) {
                             if (htmlspecialchars($lastName) == $lastName) {
                                 if (trim($lastName) == $lastName ) {
-                                    preg_match('/[A-ZА-ЯЁ]{1}[a-zа-яё]{2,}/u', $lastName, $regLastName);
+                                    preg_match('/[А-ЯЁ]{1}[а-яё]{2,}/u', $lastName, $regLastName);
 
                                     if ($regLastName ?? '') {
                                         if ($regLastName[0] == $lastName) {
@@ -139,7 +138,7 @@ class Employee implements IEmployee{
                         if ($firstNameLength >= 4 && $firstNameLength <= 15) {
                             if (htmlspecialchars($firstName) == $firstName) {
                                 if (trim($firstName) == $firstName ) {
-                                    preg_match('/[A-ZА-ЯЁ]{1}[a-zа-яё]{2,}/u', $firstName, $regFirstName);
+                                    preg_match('/[А-ЯЁ]{1}[а-яё]{2,}/u', $firstName, $regFirstName);
 
                                     if ($regFirstName ?? '') {
                                         if ($regFirstName[0] == $firstName) {
@@ -190,7 +189,7 @@ class Employee implements IEmployee{
                         if ($middleNameLength >= 6 && $middleNameLength <= 24) {
                             if (htmlspecialchars($middleName) == $middleName) {
                                 if (trim($middleName) == $middleName ) {
-                                    preg_match('/[A-ZА-ЯЁ]{1}[a-zа-яё]{2,}/u', $middleName, $regMiddleName);
+                                    preg_match('/[А-ЯЁ]{1}[а-яё]{2,}/u', $middleName, $regMiddleName);
 
                                     if ($regMiddleName ?? '') {
                                         if ($regMiddleName[0] == $middleName) {
@@ -301,19 +300,19 @@ class Employee implements IEmployee{
                                                         } else if ($day == 29 && $year % 4 == 0) {
                                                             
                                                         } else {
-                                                            throw new Error('Uncorrect Birthday Error');
+                                                            throw new Exception('Uncorrect Bday Error');
                                                         }
                                                     }
                                                     if (($year >= 1950) && ($year <= 2000)) {
                                                         return true;
                                                     } else {
-                                                        throw new Error('Uncorrect Birthday Error');
+                                                        throw new Exception('Uncorrect Bday Error');
                                                     }
                                                 } else {
-                                                    throw new Error('Uncorrect Birthday Error');
+                                                    throw new Exception('Uncorrect Bday Error');
                                                 }
                                             } else {
-                                                throw new Error('Uncorrect Birthday Error');    
+                                                throw new Exception('Uncorrect Bday Error');    
                                             }
                                         } else {
                                             throw new Exception('Uncorrect Bday Error', 1);
@@ -357,7 +356,7 @@ class Employee implements IEmployee{
         }
     
 
-    public function Show()
+    static function Show()
     {
         require_once 'DbConnect.php';
         $db = DbConnect();
@@ -481,7 +480,7 @@ class Employee implements IEmployee{
         
     }
 
-    public function ShowRoutes() {
+    static function ShowRoutes() {
         require_once 'DbConnect.php';
         $db = DbConnect();
         $updateTransport = $db->prepare('DROP TABLE IF EXISTS transport; CREATE TABLE transport AS SELECT * FROM buses UNION SELECT * FROM gazelles UNION SELECT * FROM trams UNION SELECT * FROM trolleies;');
@@ -502,17 +501,7 @@ class Employee implements IEmployee{
 interface IEmployee {
     function Create($emp);
 
-    function Delete($id);
-    
-    function Get($id);
-
-    function Find($lastName);
-  
     function Update($emp);
-
-    function Validate($emp);
-
-    function Show();
 
     function GetTaxes($id);
 
@@ -525,8 +514,6 @@ interface IEmployee {
     function RemoveRoute($emp); //снятие с маршрута
 
     function GetRoute($emp);
-
-    function ShowRoutes();
 }
     
 ?>

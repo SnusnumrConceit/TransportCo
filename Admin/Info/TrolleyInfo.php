@@ -6,20 +6,19 @@ if ($_SESSION ?? '') {
         if ($_GET['trolley'] ?? '') {
             $id = $_GET['trolley'];
             require_once '../../Classes/Trolley.php';
-            $trolley = new Trolley();
-            $trolley = $trolley->Get($id);
+            $trolley = Trolley::Get($id);
             if ($trolley) {
-                echo('<!DOCTYPE html>
+                echo("<!DOCTYPE html>
                 <html>
                 <head>
-                    <meta charset="utf-8" />
-                    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-                    <title>Page Title</title>
-                    <meta name="viewport" content="width=device-width, initial-scale=1">
-                    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
+                    <meta charset='utf-8' />
+                    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+                    <title>Троллейбус {$trolley[0]->Number}</title>
+                    <meta name='viewport' content='width=device-width, initial-scale=1'>
+                    <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css'>
                 </head>
                 <body>
-                <div class="container">');
+                <div class='container'>");
                 for ($i=0; $i < count($trolley); $i++) { 
                     echo("<div class='creator-container row'>
                     <form method='POST' class='col'>
@@ -63,17 +62,16 @@ if ($_SESSION ?? '') {
         if ($_POST['trolley'] ?? '') {
             $new_trolley = json_decode($_POST['trolley']);
             require_once '../../Classes/Trolley.php';
-            $trolley = new Trolley('');
             if ($_FILES['photo'] ?? '') {
                 $photo = $_FILES['photo'];
-                if ($trolley->Validate($new_trolley, $photo)) {
-                    $trolley = $trolley->Set($new_trolley, $photo);
+                if (Trolley::Validate($new_trolley, $photo)) {
+                    $trolley = new Trolley($new_trolley, $photo);
                     $trolley->Update($trolley);
                 }
             } else {
                 $photo = '';
-                if ($trolley->Validate($new_trolley, $photo)) {
-                    $trolley = $trolley->Set($new_trolley);
+                if (Trolley::Validate($new_trolley, $photo)) {
+                    $trolley = new Trolley($new_trolley);
                     $trolley = $trolley->Update($trolley);
                 }
                 

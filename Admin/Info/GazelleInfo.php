@@ -6,20 +6,19 @@ if ($_SESSION ?? '') {
         if ($_GET['gazelle'] ?? '') {
             $id = $_GET['gazelle'];
             require_once '../../Classes/Gazelle.php';
-            $gazelle = new Gazelle();
-            $gazelle = $gazelle->Get($id);
+            $gazelle = Gazelle::Get($id);
             if ($gazelle) {
-                echo('<!DOCTYPE html>
+                echo("<!DOCTYPE html>
                 <html>
                 <head>
-                    <meta charset="utf-8" />
-                    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-                    <title>Page Title</title>
-                    <meta name="viewport" content="width=device-width, initial-scale=1">
-                    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
+                    <meta charset='utf-8' />
+                    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+                    <title>Маршрутное такси {$gazelle[0]->Number}</title>
+                    <meta name='viewport' content='width=device-width, initial-scale=1'>
+                    <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css'>
                 </head>
                 <body>
-                <div class="container">');
+                <div class='container'>");
                 for ($i=0; $i < count($gazelle); $i++) { 
                     echo("<div class='creator-container row'>
                     <form method='POST' class='col'>
@@ -63,17 +62,16 @@ if ($_SESSION ?? '') {
         if ($_POST['gazelle'] ?? '') {
             $new_gazelle = json_decode($_POST['gazelle']);
             require_once '../../Classes/Gazelle.php';
-            $gazelle = new Gazelle('');
             if ($_FILES['photo'] ?? '') {
                 $photo = $_FILES['photo'];
-                if ($gazelle->Validate($new_gazelle, $photo)) {
-                    $gazelle = $gazelle->Set($new_gazelle, $photo);
+                if (Gazelle::Validate($new_gazelle, $photo)) {
+                    $gazelle = new Gazelle($new_gazelle, $photo);
                     $gazelle->Update($gazelle);
                 }
             } else {
                 $photo = '';
-                if ($gazelle->Validate($new_gazelle, $photo)) {
-                    $gazelle = $gazelle->Set($new_gazelle);
+                if (Gazelle::Validate($new_gazelle, $photo)) {
+                    $gazelle = new Gazelle($new_gazelle);
                     $gazelle = $gazelle->Update($gazelle);
                 }
                 
